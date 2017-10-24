@@ -1,0 +1,2 @@
+click==6.7
+Fabric3>=1.13.1.post1
