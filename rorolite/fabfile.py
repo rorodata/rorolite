@@ -1,8 +1,10 @@
 from fabric.api import task, run, env, cd, sudo
 from fabric.tasks import execute, Task
-import logging
+from .utils import hijack_output_loop
 
-logger = logging.getLogger("rorolite")
+# Fabric prints all the messages with a '[hostname] out:' prefix.
+# Hijacking it to remove the prefix
+hijack_output_loop()
 
 env.hosts = ['localhost']
 
@@ -19,7 +21,6 @@ def run_command(command, workdir="."):
 
 def run_task(taskname, **kwargs):
     task = globals().get(taskname)
-    logger.info("executing task %s", taskname)
     if isinstance(task, Task):
         execute(task, **kwargs)
     else:
