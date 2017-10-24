@@ -1,0 +1,1 @@
+export PATH=/opt/rorolite/project/.rorolite/env/bin:/opt/anaconda3/bin:$PATH

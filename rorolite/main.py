@@ -1,5 +1,6 @@
 from __future__ import print_function
 import click
+from fabric.api import env as fabric_env
 from . import __version__
 from . import fabfile
 
@@ -13,7 +14,24 @@ def cli(verbose=False):
 @click.argument("command", nargs=-1)
 @click.option("-w", "--workdir")
 def run(command, workdir=None):
-    fabfile.run_task("run_command", command=command, workdir=workdir or ".")
+    fabfile.run_task("run_command", command=command, workdir=workdir)
+
+@cli.command(name="run:notebook", context_settings={
+    "allow_interspersed_args": False,
+    "allow_extra_args": True,
+    "ignore_unknown_options": True,})
+@click.argument("args", nargs=-1)
+@click.option("-w", "--workdir")
+def run_notebook(workdir=None, args=[], **kwargs):
+    fabfile.run_task("run_notebook", workdir=workdir, args=args, kwargs=kwargs)
+
+@cli.command()
+def provision():
+    fabfile.run_task("provision")
+
+@cli.command()
+def deploy():
+    fabfile.run_task("deploy")
 
 @cli.command()
 def hello(name="world"):
