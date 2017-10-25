@@ -34,6 +34,33 @@ def deploy():
     fabfile.run_task("deploy")
 
 @cli.command()
+@click.argument("name")
+@click.option("-n", default=10, type=int)
+@click.option("-f", "--follow", is_flag=True, default=False)
+def logs(name, n=10, follow=False):
+    print("logs", follow)
+    fabfile.run_task("logs", service=name, n=n, follow=follow)
+
+@cli.command()
+def ps():
+    fabfile.run_task("supervisorctl", "status")
+
+@cli.command()
+@click.argument("name")
+def stop(name):
+    fabfile.run_task("supervisorctl", "stop", name)
+
+@cli.command()
+@click.argument("name")
+def start(name):
+    fabfile.run_task("supervisorctl", "start", name)
+
+@cli.command()
+@click.argument("name")
+def restart(name):
+    fabfile.run_task("supervisorctl", "restart", name)
+
+@cli.command()
 def hello(name="world"):
     """Prints a hello world message on the remote server.
     """

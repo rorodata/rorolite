@@ -53,6 +53,10 @@ def provision():
     sudo("apt-get install -y " + " ".join(config.system_packages))
     install_anaconda(config.anaconda_version)
 
+@task
+def supervisorctl(*args):
+    sudo("supervisorctl " + " ".join(args))
+
 def install_anaconda(version):
     print("installing anaconda {}...".format(version))
     url = config.anaconda_download_url_format.format(version=version)
@@ -64,9 +68,9 @@ def install_anaconda(version):
     path = pathlib.Path(__file__).parent / "files" / "etc" / "profile.d" / "rorolite.sh"
     put(str(path), "/etc/profile.d/rorolite.sh")
 
-def run_task(taskname, **kwargs):
+def run_task(taskname, *args, **kwargs):
     task = globals().get(taskname)
     if isinstance(task, Task):
-        execute(task, **kwargs)
+        execute(task, *args, **kwargs)
     else:
         raise Exception("Invalid task: " + repr(taskname))
