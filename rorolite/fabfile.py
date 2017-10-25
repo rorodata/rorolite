@@ -9,9 +9,6 @@ from . import config
 # Hijacking it to remove the prefix
 hijack_output_loop()
 
-env.hosts = ['ds00.pipal.in']
-env.user = "root"
-
 @task
 def hello(name="world"):
     with cd("."):

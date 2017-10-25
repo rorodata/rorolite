@@ -3,12 +3,16 @@ import click
 from fabric.api import env as fabric_env
 from . import __version__
 from . import fabfile
+from . import config
 
 @click.group()
 @click.version_option(version=__version__)
 def cli(verbose=False):
     """rorolite is a tool to deploy ML applications to your server.
     """
+    conf = config.load_config(".")
+    fabric_env.hosts = [conf.host]
+    fabric_env.user = conf.user
 
 @cli.command(context_settings={"allow_interspersed_args": False})
 @click.argument("command", nargs=-1)
