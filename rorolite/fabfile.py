@@ -60,6 +60,7 @@ def install_anaconda(version):
     print("downloading", url)
     path = "/tmp/" + url.split("/")[-1]
     run("wget -O {path}.tmp {url} && mv {path}.tmp {path}".format(path=path, url=url))
+    run("rm -rf /opt/anaconda3")
     run("bash {path} -b -p /opt/anaconda3".format(path=path))
 
     path = pathlib.Path(__file__).parent / "files" / "etc" / "profile.d" / "rorolite.sh"
