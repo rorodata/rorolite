@@ -44,7 +44,7 @@ class Deployment:
         self.push_directory()
         self.setup_virtualenv()
 
-        remote.sudo("ln -sf {} /opt/rorolite/project".format(self.deploy_root))
+        remote.sudo("ln -sfT {} /opt/rorolite/project".format(self.deploy_root))
 
         self.restart_services()
 
@@ -55,9 +55,8 @@ class Deployment:
 
     def push_directory(self):
         with tempfile.TemporaryDirectory() as tmpdir:
-            archive = self.archive(tmpdir)
+            archive = self.archive(rootdir=".", output_dir=tmpdir)
             remote.put(archive, "/tmp/rorolite-project.tgz")
-            remote.sudo("mkdir -p /opt/rorolite/project")
 
             with lcd(tmpdir):
                 self.generate_supervisor_config(rootdir=tmpdir)
@@ -77,14 +76,15 @@ class Deployment:
             if os.path.exists("requirements.txt"):
                 remote.run(".rorolite/env/bin/pip install -r requirements.txt")
 
-    def archive(self, rootdir, format='gztar', base_dir=".", filename='rorolite-project'):
-        base_name = os.path.join(rootdir, filename)
-        return shutil.make_archive(base_name, format, base_dir=base_dir)
+    def archive(self, rootdir, output_dir=None, format='gztar', base_dir=".", filename='rorolite-project'):
+        output_dir = output_dir or rootdir
+        base_name = os.path.join(output_dir, filename)
+        return shutil.make_archive(base_name, format, root_dir=rootdir, base_dir=base_dir)
 
     def restart_services(self):
         services = self.config.get('services')
         # TODO: validate services
-        sudo("ln -sf /opt/rorolite/project/.rorolite/supervisor /etc/supervisor/conf.d")
+        sudo("rm -rf /etc/supervisor/conf.d && ln -sfT /opt/rorolite/project/.rorolite/supervisor /etc/supervisor/conf.d")
         sudo("supervisorctl update")
         for s in services:
             sudo("supervisorctl restart {}".format(s['name']))
