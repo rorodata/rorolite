@@ -37,7 +37,7 @@ class Deployment:
 
         self.version = self.find_current_version() + 1
         self.deploy_root = "/opt/rorolite/deploys/{}".format(self.version)
-        print("deploying v{} for project".format(self.version))
+        print("Deploying project version {}...".format(self.version))
 
         remote.run("mkdir -p " + self.deploy_root)
 
