@@ -4,7 +4,6 @@ import yaml
 class Config:
     def __init__(self, config):
         self.config = config
-        print("config", config)
 
         if "host" not in self.config:
             raise Exception("Missing required field in the config file: host")
@@ -14,9 +13,7 @@ class Config:
 
     @staticmethod
     def load(filename):
-        print("load", filename, os.path.exists(filename))
         config = yaml.safe_load(open(filename))
-        print("config", config)
         return Config(config)
 
 def load_config(directory):

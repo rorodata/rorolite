@@ -42,7 +42,6 @@ def deploy():
 @click.option("-n", default=10, type=int)
 @click.option("-f", "--follow", is_flag=True, default=False)
 def logs(name, n=10, follow=False):
-    print("logs", follow)
     fabfile.run_task("logs", service=name, n=n, follow=follow)
 
 @cli.command()
