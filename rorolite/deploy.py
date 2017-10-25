@@ -23,6 +23,8 @@ class Deployment:
     def __init__(self, directory="."):
         self.directory = directory
         self.config = None
+        self.version = 0
+        self.deploy_root = None
 
     def read_config(self, root):
         path = os.path.join(root, "rorolite.yml")
@@ -33,9 +35,23 @@ class Deployment:
         if "host" not in self.config:
             raise Exception("Missing required field in rorolite.yml: host")
 
+        self.version = self.find_current_version() + 1
+        self.deploy_root = "/opt/rorolite/deploys/{}".format(self.version)
+        print("deploying v{} for project".format(self.version))
+
+        remote.run("mkdir -p " + self.deploy_root)
+
         self.push_directory()
         self.setup_virtualenv()
+
+        remote.sudo("ln -sf {} /opt/rorolite/project".format(self.deploy_root))
+
         self.restart_services()
+
+    def find_current_version(self):
+        output = remote.run("ls /opt/rorolite/deploys 2>/dev/null || echo", quiet=True)
+        versions = [int(v) for v in output.strip().split() if v.isnumeric()]
+        return versions and max(versions) or 0
 
     def push_directory(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -49,14 +65,14 @@ class Deployment:
                 supervisor_archive = self.archive(tmpdir, base_dir=".rorolite", filename="rorolite-supervisor")
                 remote.put(supervisor_archive, "/tmp/rorolite-supervisor.tgz")
 
-            with remote.cd("/opt/rorolite/project"):
+            with remote.cd(self.deploy_root):
                 remote.sudo("chown {} .".format(env.user))
                 remote.run("tar xzf /tmp/rorolite-project.tgz")
                 remote.run("tar xzf /tmp/rorolite-supervisor.tgz")
 
     def setup_virtualenv(self):
         print("setting up virtualenv...")
-        with remote.cd("/opt/rorolite/project"):
+        with remote.cd(self.deploy_root):
             remote.run("virtualenv -p /opt/anaconda3/bin/python3 .rorolite/env")
             if os.path.exists("requirements.txt"):
                 remote.run(".rorolite/env/bin/pip install -r requirements.txt")
@@ -68,7 +84,6 @@ class Deployment:
     def restart_services(self):
         services = self.config.get('services')
         # TODO: validate services
-        sudo("rm -rf /etc/supervisor/conf.d 2>/dev/null")
         sudo("ln -sf /opt/rorolite/project/.rorolite/supervisor /etc/supervisor/conf.d")
         sudo("supervisorctl update")
         for s in services:
