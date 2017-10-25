@@ -8,6 +8,12 @@ Currently `rorolite` is limited to deploying one project per server.
 
 [rorodata]: http://rorodata.com/
 
+## Install
+
+Install `rorolite`  using `pip`:
+
+    $ pip install rorolite
+
 ## How To Use
 
 Write a `rorolite.yml` specifying the host ipaddress and the services.
@@ -72,7 +78,7 @@ Or you can even start a jupyter notebook server.
     ...
     Copy/paste this URL into your browser when you connect for the first time,
     to login with a token:
-        http://1.2.3.4:8888/?token=7f53b445100a5edc0d035fb7ce53061ff7dae351a107ebd4
+        http://1.2.3.4:8888/?token=7f53b445100a5edc0d035fb7ce53061ff7dae351a107ebd4   
 
 ## LICENSE
 
