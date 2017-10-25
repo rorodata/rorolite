@@ -13,6 +13,7 @@ setup(
     install_requires=[
         'click==6.7',
         'Fabric3>=1.13.1.post1',
+        'firefly-python>=0.1.9'
     ],
     entry_points='''
         [console_scripts]
