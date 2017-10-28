@@ -1,5 +1,5 @@
 import pathlib
-from fabric.api import task, run, env, cd, sudo, put
+from fabric.api import task, run, env, cd, sudo, put, get
 from fabric.tasks import execute, Task
 from .utils import hijack_output_loop
 from .deploy import Deployment
@@ -50,6 +50,14 @@ def provision():
     sudo("apt-get install -y " + " ".join(config.system_packages))
     install_anaconda(config.anaconda_version)
     setup_volumes()
+
+@task
+def putfile(src, dest):
+    put(src, dest)
+
+@task
+def getfile(src, dest):
+    get(src, dest)
 
 @task
 def supervisorctl(*args):

@@ -64,10 +64,27 @@ def restart(name):
     fabfile.run_task("supervisorctl", "restart", name)
 
 @cli.command()
+@click.argument("name")
 def hello(name="world"):
     """Prints a hello world message on the remote server.
     """
     fabfile.run_task("hello", name=name)
+
+@cli.command()
+@click.argument("src")
+@click.argument("dest")
+def put(src, dest):
+    """Copies a local file to remote server.
+    """
+    fabfile.run_task("putfile", src=src, dest=dest)
+
+@cli.command()
+@click.argument("src")
+@click.argument("dest")
+def get(src, dest):
+    """Copies a file from remote server to local machine.
+    """
+    fabfile.run_task("getfile", src=src, dest=dest)
 
 @cli.command()
 def help():
