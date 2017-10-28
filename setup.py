@@ -14,7 +14,7 @@ See `<https://github.com/rorodata/rorolite>`_ for more details.
 from setuptools import setup, find_packages
 import os.path
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 setup(
     name='rorolite',
