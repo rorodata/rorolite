@@ -39,7 +39,7 @@ class Deployment:
         self.deploy_root = "/opt/rorolite/deploys/{}".format(self.version)
         print("Deploying project version {}...".format(self.version))
 
-        remote.run("mkdir -p " + self.deploy_root)
+        remote.sudo("mkdir -p " + self.deploy_root)
 
         self.push_directory()
         self.setup_virtualenv()
