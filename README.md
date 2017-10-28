@@ -80,6 +80,16 @@ Or you can even start a jupyter notebook server.
     to login with a token:
         http://1.2.3.4:8888/?token=7f53b445100a5edc0d035fb7ce53061ff7dae351a107ebd4   
 
+Copying files to/from remote server can be done using ``put``/``get`` commands. A directory ``/volumes/data`` is created during provisioning for storing data files, models etc.
+
+    $ rorolite put data/loans.csv /volumes/data/
+    ...
+    [1.2.3.4] put: data/loans.csv -> /volumes/data/loans.csv
+
+    $ rorolite get /volumes/data/model.pkl models/model.pkl
+    ...
+    [1.2.3.4] download: models/model.pkl <- /volumes/data/model.pkl
+
 ## LICENSE
 
 rorolite is licensed under Apache 2 license. Please see LICENSE file for more details.
