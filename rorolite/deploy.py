@@ -72,7 +72,7 @@ class Deployment:
     def setup_virtualenv(self):
         print("setting up virtualenv...")
         with remote.cd(self.deploy_root):
-            remote.run("virtualenv -p /opt/anaconda3/bin/python3 .rorolite/env")
+            remote.run("virtualenv --system-site-packages -p /opt/anaconda3/bin/python3 .rorolite/env")
             if os.path.exists("requirements.txt"):
                 remote.run(".rorolite/env/bin/pip install -r requirements.txt")
 
