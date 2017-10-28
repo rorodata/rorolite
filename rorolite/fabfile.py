@@ -49,6 +49,7 @@ def provision():
     sudo("apt-get update")
     sudo("apt-get install -y " + " ".join(config.system_packages))
     install_anaconda(config.anaconda_version)
+    setup_volumes()
 
 @task
 def supervisorctl(*args):
@@ -60,11 +61,16 @@ def install_anaconda(version):
     print("downloading", url)
     path = "/tmp/" + url.split("/")[-1]
     run("wget -O {path}.tmp {url} && mv {path}.tmp {path}".format(path=path, url=url))
-    run("rm -rf /opt/anaconda3")
-    run("bash {path} -b -p /opt/anaconda3".format(path=path))
+    sudo("rm -rf /opt/anaconda3")
+    sudo("bash {path} -b -p /opt/anaconda3".format(path=path))
 
     path = pathlib.Path(__file__).parent / "files" / "etc" / "profile.d" / "rorolite.sh"
-    put(str(path), "/etc/profile.d/rorolite.sh")
+    put(str(path), "/etc/profile.d/rorolite.sh", use_sudo=True)
+
+def setup_volumes():
+    sudo("mkdir -p /volumes/data")
+    sudo("chown {} /volumes".format(env.user))
+    sudo("chown {} /volumes/data".format(env.user))
 
 def run_task(taskname, *args, **kwargs):
     task = globals().get(taskname)
