@@ -72,7 +72,10 @@ class Deployment:
         print("setting up virtualenv...")
         with remote.cd(self.deploy_root):
             remote.run("virtualenv --system-site-packages -p /opt/anaconda3/bin/python3 .rorolite/env")
+            # firefly-python library is required for rorolite
+            remote.run(".rorolite/env/bin/pip install firefly-python")
             if os.path.exists("requirements.txt"):
+                # install all the application dependencies
                 remote.run(".rorolite/env/bin/pip install -r requirements.txt")
 
     def archive(self, rootdir, output_dir=None, format='gztar', base_dir=".", filename='rorolite-project'):
