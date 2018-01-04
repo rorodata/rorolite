@@ -129,7 +129,9 @@ class Deployment:
             raise Exception("command is not specified for service {!r}".format(name))
 
         path = pathlib.Path(rootdir).joinpath(".rorolite", "supervisor", name + ".conf")
-        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.parent.exists():
+            path.parent.mkdir(parents=True)
 
         text = SUPERVISOR_CONFIG.format(name=name, directory=directory, command=command)
-        path.write_text(text)
+        with path.open("w") as f:
+            f.write(text)
