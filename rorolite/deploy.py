@@ -5,9 +5,8 @@ import pathlib
 import yaml
 import tempfile
 import shutil
-from fabric.api import env, sudo, run, local, lcd
+from fabric.api import env, sudo, lcd
 import fabric.api as remote
-from . import fabfile
 
 SUPERVISOR_CONFIG = """
 [program:{name}]
@@ -16,7 +15,7 @@ directory = {directory}
 redirect_stderr = true
 stdout_logfile = /var/log/supervisor/%(program_name)s.log
 environment =
-    PATH="/opt/rorolite/project/.rorolite/env/bin:$PATH"
+    PATH="/opt/rorolite/project/.rorolite/env/bin:%(ENV_PATH)s"
 """
 
 class Deployment:
@@ -82,10 +81,15 @@ class Deployment:
         return shutil.make_archive(base_name, format, root_dir=rootdir, base_dir=base_dir)
 
     def restart_services(self):
-        services = self.config.get('services')
+        services = self.config.get('services', [])
         # TODO: validate services
         sudo("rm -rf /etc/supervisor/conf.d && ln -sfT /opt/rorolite/project/.rorolite/supervisor /etc/supervisor/conf.d")
         sudo("supervisorctl update")
+
+        if not services:
+            print("Deploy successful. No services found.")
+            return
+
         for s in services:
             sudo("supervisorctl restart {}".format(s['name']))
 
@@ -95,7 +99,18 @@ class Deployment:
             print("  {} -- http://{}:{}/".format(s['name'], host, s['port']))
 
     def generate_supervisor_config(self, rootdir):
-        services = self.config.get('services')
+        # Create the supervisor directory
+        path = pathlib.Path(rootdir).joinpath(".rorolite", "supervisor")
+
+        # XXX-Anand: Jan 2018
+        # Passing exist_ok to mkdir is failing mysteriously.
+        # This very function is working fine when called indepenently.
+        # May be there is some monkey-patching going on in Fabric.
+        # The following work-around takes care of it.
+        if not path.exists():
+            path.mkdir(parents=True)
+
+        services = self.config.get('services', [])
         for s in services:
             self._generate_config(s, rootdir=rootdir)
 
