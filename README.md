@@ -6,6 +6,8 @@ The interface of `rorolite` is based on the interface of [rorodata platform][ror
 
 Currently `rorolite` is limited to deploying one project per server.
 
+It only supports Ubuntu/Debian distributions of Linux, preferably Ubuntu 16.04. 
+
 [rorodata]: http://rorodata.com/
 
 ## Install
