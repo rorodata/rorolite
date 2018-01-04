@@ -105,7 +105,7 @@ class Deployment:
         function = service.get('function')
         command = service.get('command')
         port = service['port']
-        directory = os.path.join("/opt/rorolite/project", service.get("directory", ""))
+        directory = "/opt/rorolite/project/" + service.get("directory", "")
 
         if function:
             command = '/opt/rorolite/project/.rorolite/env/bin/firefly -b 0.0.0.0:{port} {function}'.format(port=port, function=function)
