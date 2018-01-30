@@ -74,7 +74,7 @@ class Deployment:
         print("setting up virtualenv...")
         with remote.cd(self.deploy_root):
             python_binary = self.project.runtime.python_binary
-            remote.run("python3 -m virtualenv --system-site-packages -p {} .rorolite/env".format(python_binary))
+            remote.run("{python} -m virtualenv --system-site-packages -p {python} .rorolite/env".format(python=python_binary))
             if os.path.exists("requirements.txt"):
                 # install all the application dependencies
                 remote.run(".rorolite/env/bin/pip install -r requirements.txt")
