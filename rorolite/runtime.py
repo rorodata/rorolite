@@ -61,6 +61,12 @@ class Runtime(object):
             sudo("{} -m pip -q install {}".format(
                 self.python_binary, " ".join(self.pip_packages)))
 
+        if self.after_scripts:
+            with cd(target):
+                for s in self.after_scripts:
+                    print("executing", s)
+                    sudo(s)
+
     @classmethod
     def all(cls):
         def is_runtime(name):
