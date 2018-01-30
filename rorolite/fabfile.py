@@ -3,6 +3,7 @@ from fabric.api import task, run, env, cd, sudo, put, get
 from fabric.tasks import execute, Task
 from .utils import hijack_output_loop
 from .deploy import Deployment
+from .project import Project
 from . import config
 
 # Fabric prints all the messages with a '[hostname] out:' prefix.
@@ -46,9 +47,8 @@ def deploy():
 
 @task
 def provision():
-    sudo("apt-get update")
-    sudo("apt-get install -y " + " ".join(config.system_packages))
-    install_anaconda(config.anaconda_version)
+    project = Project()
+    project.runtime.install()
     setup_volumes()
 
 @task
@@ -62,18 +62,6 @@ def getfile(src, dest):
 @task
 def supervisorctl(*args):
     sudo("supervisorctl " + " ".join(args))
-
-def install_anaconda(version):
-    print("installing anaconda {}...".format(version))
-    url = config.anaconda_download_url_format.format(version=version)
-    print("downloading", url)
-    path = "/tmp/" + url.split("/")[-1]
-    run("wget -O {path}.tmp {url} && mv {path}.tmp {path}".format(path=path, url=url))
-    sudo("rm -rf /opt/anaconda3")
-    sudo("bash {path} -b -p /opt/anaconda3".format(path=path))
-
-    path = pathlib.Path(__file__).parent / "files" / "etc" / "profile.d" / "rorolite.sh"
-    put(str(path), "/etc/profile.d/rorolite.sh", use_sudo=True)
 
 def setup_volumes():
     sudo("mkdir -p /volumes/data")

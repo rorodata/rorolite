@@ -7,6 +7,7 @@ import tempfile
 import shutil
 from fabric.api import env, sudo, lcd
 import fabric.api as remote
+from .project import Project
 
 SUPERVISOR_CONFIG = """
 [program:{name}]
@@ -20,6 +21,7 @@ environment =
 
 class Deployment:
     def __init__(self, directory="."):
+        self.project = Project(directory)
         self.directory = directory
         self.config = None
         self.version = 0
@@ -71,9 +73,8 @@ class Deployment:
     def setup_virtualenv(self):
         print("setting up virtualenv...")
         with remote.cd(self.deploy_root):
-            remote.run("virtualenv --system-site-packages -p /opt/anaconda3/bin/python3 .rorolite/env")
-            # firefly-python library is required for rorolite
-            remote.run(".rorolite/env/bin/pip install firefly-python")
+            python_binary = self.project.runtime.python_binary
+            remote.run("python3 -m virtualenv --system-site-packages -p {} .rorolite/env".format(python_binary))
             if os.path.exists("requirements.txt"):
                 # install all the application dependencies
                 remote.run(".rorolite/env/bin/pip install -r requirements.txt")

@@ -1,0 +1,63 @@
+name: raspberrypi-python3-keras
+version: 18.01
+
+python_binary: /usr/bin/python3.5
+
+apt_packages:
+  - build-essential
+  - cmake
+  - pkg-config
+  - libblas-dev
+  - liblapack-dev
+  - libatlas-base-dev
+  - gfortran
+  - git
+
+  # image libraries for opencv
+  - libopenjp2-7 
+  - libjpeg-dev
+  - libjasper-dev
+  - libtiff5
+  - libtiff5-dev
+  - libpng12-dev  
+
+  # video libraries for opencv
+  - libavcodec-dev 
+  - libavformat-dev
+  - libswscale-dev
+  - libv4l-dev
+  - libxvidcore-dev
+  - libx264-dev
+
+  # other packages required for opencv
+  - libilmbase12
+  - openexr
+  - libgstreamer1.0-0
+  - libgtk-3-0
+
+  - libhdf5-100
+  - python3.5-dev
+  - python3-pip
+  - python3-virtualenv
+  - supervisor
+
+pip_packages:
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - scikit-image
+  - opencv-python
+  - nltk
+  - sympy
+  - joblib
+  - h5py
+  - pillow
+  - jupyter
+  - SQLAlchemy
+  - https://s3.amazonaws.com/rorodata-raspberrypi/tensorflow-1.5.0rc1-cp35-none-any.whl
+  - keras
+  - Pillow
+  - h5py
+  - firefly-python

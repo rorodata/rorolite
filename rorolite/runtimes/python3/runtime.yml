@@ -1,0 +1,30 @@
+name: python3
+version: 18.01
+
+python_binary: /usr/bin/python3.5
+
+apt_packages:
+  - build-essential
+  - cmake
+  - pkg-config
+  - libblas-dev
+  - liblapack-dev
+  - libatlas-base-dev
+  - gfortran
+  - git
+  - python3.5-dev
+  - python3-pip
+  - python3-virtualenv
+  - supervisor
+
+pip_packages:
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - scikit-image
+  - Pillow
+  - jupyter
+  - SQLAlchemy
+  - firefly-python
