@@ -20,6 +20,7 @@ Install `rorolite`  using `pip`:
 
 Write a `rorolite.yml` specifying the host ipaddress and the services.
 
+    runtime: python3-keras
     host: 1.2.3.4
 
     services:
@@ -35,7 +36,12 @@ Either a function or a command can be specified as a service. When a function is
 
 [firefly]: http://firefly-python.readthedocs.io/
 
-The server needs to provisioned once to install all the necessary system software. All the application dependencies are installed on every deploy.
+The server needs to provisioned once to install all the necessary system software and base dependencies specified by the runtime mentioned in the `rorolite.yml` file. All the application dependencies are installed on every deploy.
+
+The currently available runtimes are:
+
+* python3
+* python3-keras
 
 To provision the server, run:
 
