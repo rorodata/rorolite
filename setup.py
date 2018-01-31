@@ -13,7 +13,7 @@ See `<https://github.com/rorodata/rorolite>`_ for more details.
 """
 from setuptools import setup, find_packages
 
-__version__ = '0.1.4'
+__version__ = '0.2.0'
 
 setup(
     name='rorolite',
@@ -24,6 +24,7 @@ setup(
     long_description=__doc__,
     packages=find_packages(),
     include_package_data=True,
+    zip_safe=False,
     install_requires=[
         'click==6.7',
         'Fabric3>=1.13.1.post1',
