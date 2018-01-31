@@ -1,10 +1,9 @@
-import pathlib
+from __future__ import print_function
 from fabric.api import task, run, env, cd, sudo, put, get
 from fabric.tasks import execute, Task
 from .utils import hijack_output_loop
 from .deploy import Deployment
 from .project import Project
-from . import config
 
 # Fabric prints all the messages with a '[hostname] out:' prefix.
 # Hijacking it to remove the prefix

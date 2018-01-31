@@ -1,4 +1,6 @@
+from __future__ import print_function
 import os
+import sys
 import yaml
 
 class Config:
@@ -18,4 +20,7 @@ class Config:
 
 def load_config(directory):
     path = os.path.join(directory, "rorolite.yml")
+    if not os.path.exists(path):
+        print("Unable to find rorolite.yml file", file=sys.stderr)
+        sys.exit(1)
     return Config.load(path)
