@@ -8,6 +8,8 @@ from fabric.api import sudo, put, cd
 from pkg_resources import resource_listdir, resource_exists, resource_filename, resource_stream
 import yaml
 
+DEFAULT_RUNTIME = "python3"
+
 class Runtime(object):
     """Runtime represents a software setup.
 
