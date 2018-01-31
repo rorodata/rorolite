@@ -7,6 +7,7 @@
 from fabric.api import sudo, put, cd
 from pkg_resources import resource_listdir, resource_exists, resource_filename, resource_stream
 import yaml
+import pathlib
 
 DEFAULT_RUNTIME = "python3"
 
@@ -68,6 +69,12 @@ class Runtime(object):
                 for s in self.after_scripts:
                     print("executing", s)
                     sudo(s)
+
+        self.setup_system_path()
+
+    def setup_system_path(self):
+        path = pathlib.Path(__file__).parent / "files" / "etc" / "profile.d" / "rorolite.sh"
+        put(str(path), "/etc/profile.d/Z99-rorolite.sh", use_sudo=True)
 
     @classmethod
     def all(cls):

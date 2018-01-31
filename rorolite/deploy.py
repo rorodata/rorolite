@@ -75,9 +75,13 @@ class Deployment:
         with remote.cd(self.deploy_root):
             python_binary = self.project.runtime.python_binary
             remote.run("{python} -m virtualenv --system-site-packages -p {python} .rorolite/env".format(python=python_binary))
+            # The system wide installation of firefly and jupyter is creating
+            # some trouble with import paths.
+            # Installing them in the virtualenv as a work-around
+            remote.run(".rorolite/env/bin/pip install -q firefly-python jupyter")
             if os.path.exists("requirements.txt"):
                 # install all the application dependencies
-                remote.run(".rorolite/env/bin/pip install -r requirements.txt")
+                remote.run(".rorolite/env/bin/pip install -q -r requirements.txt")
 
     def archive(self, rootdir, output_dir=None, format='gztar', base_dir=".", filename='rorolite-project'):
         output_dir = output_dir or rootdir

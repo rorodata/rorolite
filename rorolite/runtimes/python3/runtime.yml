@@ -25,6 +25,4 @@ pip_packages:
   - scikit-learn
   - scikit-image
   - Pillow
-  - jupyter
   - SQLAlchemy
-  - firefly-python
