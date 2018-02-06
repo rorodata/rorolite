@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rorolite &#8212; rorolite 0.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="rorolite">
+<h1>rorolite<a class="headerlink" href="#rorolite" title="Permalink to this headline">¶</a></h1>
+<p>rorolite is an open-source command-line tool to deploy Machine Learning
+applications to your own server. It provides simple interface to provision the server to install all the required dependencies and deploy the ML application as an API.</p>
+<p>This is a lite version of the <a class="reference external" href="https://rorodata.com/">rorodata platform</a>.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Install <code class="docutils literal"><span class="pre">rorolite</span></code> using <code class="docutils literal"><span class="pre">pip</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install rorolite
+</pre></div>
+</div>
+</div>
+<div class="section" id="system-requirements">
+<h2>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The target server should be running Ubuntu 16.04.</p>
+</div>
+<div class="section" id="how-to-use">
+<h2>How to use<a class="headerlink" href="#how-to-use" title="Permalink to this headline">¶</a></h2>
+<p>Write a <code class="docutils literal"><span class="pre">rorolite.yml</span></code> specifying the host ipaddress and the services.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">runtime</span><span class="p">:</span> <span class="n">python3</span>
+
+<span class="c1"># IP address/hostname of the target server</span>
+<span class="n">host</span><span class="p">:</span> <span class="mf">1.2</span><span class="o">.</span><span class="mf">3.4</span>
+
+<span class="c1"># username on the target server</span>
+<span class="n">user</span><span class="p">:</span> <span class="n">alice</span>
+
+<span class="n">services</span><span class="p">:</span>
+    <span class="c1"># run the predict function in credit_risk_service module as an API on port 8000</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">api</span>
+      <span class="n">function</span><span class="p">:</span> <span class="n">credit_risk_service</span><span class="o">.</span><span class="n">predict</span>
+      <span class="n">port</span><span class="p">:</span> <span class="mi">8000</span>
+
+    <span class="c1"># run gunicorn process port 8080</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">webapp</span>
+      <span class="n">command</span><span class="p">:</span> <span class="n">gunicorn</span> <span class="n">webapp</span><span class="p">:</span><span class="n">app</span> <span class="o">-</span><span class="n">b</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">8080</span>
+      <span class="n">port</span><span class="p">:</span> <span class="mi">8080</span>
+</pre></div>
+</div>
+<p>Either a function or a command can be specified as a service. When a function is specified as a service, rorolite used the <a class="reference external" href="https://rorodata.github.io/firefly">firefly</a> to deploy it as a service.</p>
+<p>The server needs to provisioned once to install all the necessary system software and base dependencies specified by the runtime mentioned in the <code class="docutils literal"><span class="pre">rorolite.yml</span></code> file. All the application dependencies are installed on every deploy.</p>
+<p>The currently available runtimes are:</p>
+<ul class="simple">
+<li>python3</li>
+<li>python3-keras</li>
+</ul>
+<p>To provision the server, run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite provision
+...
+</pre></div>
+</div>
+<p>To deploy your project, run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite deploy
+Deploying project version 7...
+...
+Services are live at:
+  api -- http://1.2.3.4:8000/
+  webapp -- http://1.2.3.4:8080/
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">deploy</span></code> command pushes your code to the server, sets up a virtual env, installs all the dependencies from your <code class="docutils literal"><span class="pre">requirements.txt</span></code> file and starts the specified services.</p>
+<p>Inspect the running services using the <code class="docutils literal"><span class="pre">ps</span></code> command.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite ps
+...
+api                              RUNNING   pid 23796, uptime 0:02:07
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">logs</span></code> command allows inspecting logs of any service.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite logs api
+2017-10-25 04:13:12 firefly [INFO] Starting Firefly...
+2017-10-25 04:15:12 predict function called
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">run</span></code> command allows running any command on the remote server.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite run python train.py
+starting the training...
+reading the input files...
+building the model...
+saving the model...
+done.
+</pre></div>
+</div>
+<p>Or you can even start a jupyter notebook server.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite run:notebook
+...
+Copy/paste this URL into your browser when you connect for the first time,
+to login with a token:
+    http://1.2.3.4:8888/?token=7f53b445100a5edc0d035fb7ce53061ff7dae351a107ebd4
+</pre></div>
+</div>
+<p>Copying files to/from remote server can be done using <code class="docutils literal"><span class="pre">put</span></code>/<code class="docutils literal"><span class="pre">get</span></code> commands. A directory <code class="docutils literal"><span class="pre">/volumes/data</span></code> is created during provisioning for storing data files, models etc.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rorolite put data/loans.csv /volumes/data/
+...
+[1.2.3.4] put: data/loans.csv -&gt; /volumes/data/loans.csv
+
+$ rorolite get /volumes/data/model.pkl models/model.pkl
+...
+[1.2.3.4] download: models/model.pkl &lt;- /volumes/data/model.pkl
+</pre></div>
+</div>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>rorolite is licensed under Apache 2 license. Please see <a class="reference external" href="https://github.com/rorodata/rorolite/tree/master/LICENSE">LICENSE</a> file for more details.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">rorolite</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#system-requirements">System Requirements</a></li>
+<li><a class="reference internal" href="#how-to-use">How to use</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, <a href="https://rorodata.com/">rorodata</a>.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
