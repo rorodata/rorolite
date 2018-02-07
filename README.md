@@ -98,6 +98,13 @@ Copying files to/from remote server can be done using ``put``/``get`` commands. 
     ...
     [1.2.3.4] download: models/model.pkl <- /volumes/data/model.pkl
 
+## Sample Applications
+
+Checkout the following sample applications written for rorolite:
+
+* [iris-demo](https://github.com/rorodata/iris-demo)
+* [rorolite-demo](https://github.com/rorodata/rorolite-demo)
+
 ## LICENSE
 
 rorolite is licensed under Apache 2 license. Please see LICENSE file for more details.
