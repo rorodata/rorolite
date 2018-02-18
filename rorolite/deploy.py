@@ -8,7 +8,7 @@ import shutil
 from fabric.api import env, sudo, lcd
 import fabric.api as remote
 from .project import Project
-
+from . import cron
 SUPERVISOR_CONFIG = """
 [program:{name}]
 command = {command}
@@ -46,9 +46,15 @@ class Deployment:
         self.setup_virtualenv()
 
         remote.sudo("ln -sfT {} /opt/rorolite/project".format(self.deploy_root))
-
+    
         self.restart_services()
 
+        self.setup_cron()
+        
+    def setup_cron(self):
+        print("Setting up cron")
+        cron_obj=cron.Cron()
+        cron_obj.setup_cron()
     def find_current_version(self):
         output = remote.run("ls /opt/rorolite/deploys 2>/dev/null || echo", quiet=True)
         versions = [int(v) for v in output.strip().split() if v.isnumeric()]
