@@ -17,16 +17,15 @@ import re
 # │ │ │ │ │
 # * * * * *  command to execute
 
-
 class Cron:
     keywords = ['min(ute)?s?', 'hours?', '', 'months?', '']
-    skipWords=['min','minute','minutes''every','day','at','on','everyday','month','hour','months','hours','daily']
-    daysAndMonths={
+    skip_words=['min','minute','minutes''every','day','at','on','everyday','month','hour','months','hours','daily']
+    days_and_months={
     3 : ['','january','february','march','april','may','june','july','august','septemeber','october','november','december'],
     4 : ['sunday', 'monday', 'tuesday', 'wednsday', 'thursday', 'friday', 'saturday']}
-    valRegex=['([0-9]+):([0-9]+)\s*([apAP][mM])?','([0-9]+):?([0-9]+)?\s*([apAP][mM])','([0-3]?[0-9])(st|th|rd)']
+    val_regex=['([0-9]+):([0-9]+)\s*([apAP][mM])?','([0-9]+):?([0-9]+)?\s*([apAP][mM])','([0-3]?[0-9])(st|th|rd)']
     limits = [[0,59], [0,23], [1,31], [1,12], [0,6]]
-    maxValues = [60, 24, 31, 12, 7]
+    max_values = [60, 24, 31, 12, 7]
     
     def __init__(self, directory="."):
         self.directory = directory
@@ -60,9 +59,9 @@ class Cron:
                 print("\nrun %s at %s => %s"%(job['command'],job['when'],jobstr))
                 self.cronstrings.append(jobstr+" "+job['command'])
     
-    def in_limits(self,val,kwIndex):
+    def in_limits(self,val,kw_index):
         try:
-            if val>=self.limits[kwIndex][0] and val<=self.limits[kwIndex][1]:
+            if val>=self.limits[kw_index][0] and val<=self.limits[kw_index][1]:
                 return True
         except Exception as e:
             print("in_limits:",str(e))
@@ -82,15 +81,15 @@ class Cron:
             return False
         return True
 
-    def split_float(self,flVal,baseVal):
-        temp=float(flVal)*float(baseVal)
-        return (int(temp/baseVal),int(temp%baseVal))
+    def split_float(self,fl_val,base_val):
+        temp=float(fl_val)*float(base_val)
+        return (int(temp/base_val),int(temp%base_val))
 
     def value_of(self,val):
         try:
             if self.is_type(float,val):
                 return float(val)
-            for regex in self.valRegex:
+            for regex in self.val_regex:
                 g=re.search(regex,val)
                 if g and g.group():
                     return g.groups()
@@ -114,45 +113,43 @@ class Cron:
 
     def process_tokens(self,tokens,cronstr,cronvals):
         for i in range(len(tokens)):
-            currentToken=tokens[i]
-            if type(currentToken) is float and i+1<len(tokens):
+            current_token=tokens[i]
+            if type(current_token) is float and i+1<len(tokens):
                 # 'every x' format
                 try:
-                    kwIndex=self.key_word_index(tokens[i+1])
-                    if (kwIndex is not None) and currentToken>=self.limits[kwIndex][0]:
-                        maxval=(self.maxValues[kwIndex-1] if kwIndex>0 else 1)
-                        x,y=self.split_float(currentToken,maxval) # 2.5 hours => 2 hours 30 mins
-                        self.assign_cv(cronvals,cronstr,kwIndex,x%self.maxValues[kwIndex],True)
-                        self.assign_cv(cronvals,cronstr,kwIndex+1,x/self.maxValues[kwIndex],True)
+                    kw_index=self.key_word_index(tokens[i+1])
+                    if (kw_index is not None) and current_token>=self.limits[kw_index][0]:
+                        maxval=(self.max_values[kw_index-1] if kw_index>0 else 1)
+                        x,y=self.split_float(current_token,maxval) # 2.5 hours => 2 hours 30 mins
+                        self.assign_cv(cronvals,cronstr,kw_index,x%self.max_values[kw_index],True)
+                        self.assign_cv(cronvals,cronstr,kw_index+1,x/self.max_values[kw_index],True)
                         if y>0:
-                            self.assign_cv(cronvals,cronstr,kwIndex-1,y,True)
+                            self.assign_cv(cronvals,cronstr,kw_index-1,y,True)
                 except Exception as e:
-                    print('Error processing %s %r on line %r'%(currentToken,e,sys.exc_info()[-1].tb_lineno))
-            elif type(currentToken) is str:
-                if currentToken in self.skipWords : # skip day, everyday,month etc
+                    print('Error processing %s %r on line %r'%(current_token,e,sys.exc_info()[-1].tb_lineno))
+            elif type(current_token) is str:
+                if current_token in self.skip_words : # skip day, everyday,month etc
                     continue
-                for key,value in self.daysAndMonths.items():
+                for key,value in self.days_and_months.items():
                     for k in range(len(value)):
-                        if currentToken.lower() in value[k]: # apr,april,wed,wednsday etc. are valid
+                        if current_token.lower() in value[k]: # apr,april,wed,wednsday etc. are valid
                             try:
                                 cronvals[int(key)]=k
-                                #lookForDayOfMonth(tokens,i-1)
-                                #lookForDayOfMonth(tokens,i+1)
                             except Exception as e:
                                 print(str(e))
-            elif type(currentToken) is tuple:
-                temp=currentToken
+            elif type(current_token) is tuple:
+                temp=current_token
                 temp=[(int(e) if self.is_type(int,e) else e)  for e in temp]
                 temp=[(0 if e is None else e)  for e in temp]
-                currentToken=tuple(temp)
-                if len(currentToken)==3: #time
-                    currentToken=(currentToken[1], currentToken[0], currentToken[2])
-                    for v in range(len(currentToken)-1):
-                        if self.in_limits(currentToken[v],v):
-                            cronvals[v]=currentToken[v]
-                    amPmStr=currentToken[len(currentToken)-1]
-                    if amPmStr and amPmStr.lower() == 'pm':
+                current_token=tuple(temp)
+                if len(current_token)==3: #time
+                    current_token=(current_token[1], current_token[0], current_token[2])
+                    for v in range(len(current_token)-1):
+                        if self.in_limits(current_token[v],v):
+                            cronvals[v]=current_token[v]
+                    am_pm_str=current_token[len(current_token)-1]
+                    if am_pm_str and am_pm_str.lower() == 'pm':
                         cronvals[1]=(cronvals[1]+12)%24
-                elif len(currentToken)==2:
-                    if self.in_limits(currentToken[0],2):
-                        cronvals[2]=currentToken[0]
+                elif len(current_token)==2:
+                    if self.in_limits(current_token[0],2):
+                        cronvals[2]=current_token[0]
