@@ -26,3 +26,4 @@ pip_packages:
   - scikit-image
   - Pillow
   - SQLAlchemy
+  - gunicorn
