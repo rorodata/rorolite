@@ -25,8 +25,14 @@ def run_command(command, workdir=None):
 def run_notebook(workdir=None, args=None, kwargs=None):
     args = args or []
     kwargs = kwargs or {}
-    print("host", env.host)
     command = "jupyter notebook --ip {host} --allow-root".format(host=env.host).split() + list(args)
+    return run_command(command, workdir=workdir)
+
+@task
+def run_jupyterlab(workdir=None, args=None, kwargs=None):
+    args = args or []
+    kwargs = kwargs or {}
+    command = "jupyter lab --ip {host} --allow-root".format(host=env.host).split() + list(args)
     return run_command(command, workdir=workdir)
 
 @task

@@ -78,7 +78,7 @@ class Deployment:
             # The system wide installation of firefly and jupyter is creating
             # some trouble with import paths.
             # Installing them in the virtualenv as a work-around
-            remote.run(".rorolite/env/bin/pip install -q firefly-python jupyter")
+            remote.run(".rorolite/env/bin/pip install -q firefly-python jupyter jupyterlab")
             if os.path.exists("requirements.txt"):
                 # install all the application dependencies
                 remote.run(".rorolite/env/bin/pip install -q -r requirements.txt")

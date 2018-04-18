@@ -29,6 +29,15 @@ def run(command, workdir=None):
 def run_notebook(workdir=None, args=[], **kwargs):
     fabfile.run_task("run_notebook", workdir=workdir, args=args, kwargs=kwargs)
 
+@cli.command(name="run:lab", context_settings={
+    "allow_interspersed_args": False,
+    "allow_extra_args": True,
+    "ignore_unknown_options": True,})
+@click.argument("args", nargs=-1)
+@click.option("-w", "--workdir")
+def run_jupyterlab(workdir=None, args=[], **kwargs):
+    fabfile.run_task("run_jupyterlab", workdir=workdir, args=args, kwargs=kwargs)
+
 @cli.command()
 def provision():
     fabfile.run_task("provision")
