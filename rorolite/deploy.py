@@ -131,7 +131,7 @@ class Deployment:
         directory = "/opt/rorolite/project/" + service.get("directory", "")
 
         if function:
-            command = '/opt/rorolite/project/.rorolite/env/bin/firefly -b 0.0.0.0:{port} {function}'.format(port=port, function=function)
+            command = '/opt/rorolite/project/.rorolite/env/bin/gunicorn firefly:app -b 0.0.0.0:{port} -e FIREFLY_FUNCTIONS={function} -w $(nproc)'.format(port=port, function=function)
 
         if command is None:
             raise Exception("command is not specified for service {!r}".format(name))
